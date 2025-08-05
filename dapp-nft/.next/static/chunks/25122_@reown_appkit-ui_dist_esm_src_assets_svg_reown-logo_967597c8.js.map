@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 5, "column": 0}, "map": {"version":3,"file":"turbopack:///[project]/node_modules/.pnpm/@reown+appkit-ui@1.7.8_@types+react@19.1.9_bufferutil@4.0.9_react@19.1.0_typescript@5.9_0a1845c789577c7fe3857ee84addb0d6/node_modules/@reown/appkit-ui/dist/esm/src/assets/svg/reown-logo.js","sourceRoot":"","sources":["../../../../../src/assets/svg/reown-logo.ts"],"sourcesContent":[],"names":[],"mappings":";;;;;AAAA,OAAO,EAAE,GAAG,EAAE,MAAM,KAAK,CAAA;;;;;;;;;;;;AAElB,MAAM,QAAQ,4NAAG,MAAA,AAAG,CAAA","debugId":null}}]
+}

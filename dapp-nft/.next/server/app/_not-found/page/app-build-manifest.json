@@ -1,0 +1,31 @@
+{
+  "pages": {
+    "/_not-found/page": [
+      "static/chunks/4ee35_next_dist_39db4b3b._.js",
+      "static/chunks/src_app_favicon_ico_mjs_de8bcf8c._.js",
+      "static/chunks/_f0ba7226._.css",
+      "static/chunks/node_modules__pnpm_f4805177._.js",
+      "static/chunks/81267_@rainbow-me_rainbowkit_dist_019aac2e._.js",
+      "static/chunks/5d0e3_@wagmi_core_dist_esm_1ab6689e._.js",
+      "static/chunks/89179_viem__esm_utils_f291146d._.js",
+      "static/chunks/89179_viem__esm_errors_ef54a228._.js",
+      "static/chunks/89179_viem__esm_actions_86a89195._.js",
+      "static/chunks/89179_viem__esm_b6bbd3d7._.js",
+      "static/chunks/4e570_@noble_curves_esm_553f2431._.js",
+      "static/chunks/c1baa_ox__esm_core_6204eb05._.js",
+      "static/chunks/f7625_@tanstack_query-core_build_modern_07ccf1f7._.js",
+      "static/chunks/node_modules__pnpm_833c8490._.js",
+      "static/chunks/src_50793068._.js",
+      "static/chunks/src_app_layout_tsx_c3d5b712._.js",
+      "static/chunks/[turbopack]_browser_dev_hmr-client_hmr-client_ts_b1d6cc5a._.js",
+      "static/chunks/4ee35_next_dist_compiled_react-dom_3272c58b._.js",
+      "static/chunks/4ee35_next_dist_compiled_next-devtools_index_2e0e5393.js",
+      "static/chunks/4ee35_next_dist_compiled_4cfa4df1._.js",
+      "static/chunks/4ee35_next_dist_client_fd6adcd7._.js",
+      "static/chunks/4ee35_next_dist_f9635e4b._.js",
+      "static/chunks/61dca_@swc_helpers_cjs_28edb73c._.js",
+      "static/chunks/_e69f0d32._.js",
+      "static/chunks/_32d12b8e._.js"
+    ]
+  }
+}
