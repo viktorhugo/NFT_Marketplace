@@ -17,6 +17,7 @@ import {
     Menu,
     X,
     Bell,
+    HandCoins,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
@@ -37,21 +38,22 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
 
     const navItems = [
         { 
-            name: "Dashboard", 
+            name: "List NFTs", 
             icon: <LayoutDashboard className="h-5 w-5" />, 
-            href: "/" },
+            href: "/list-nft" },
         { 
-            name: "Markets", 
-            icon: <BarChart3 className="h-5 w-5" />, 
-            href: "/markets" },
-        { 
-            name: "Stake", 
-            icon: <CoinsStacked className="h-5 w-5" />, 
-            href: "/stake" },
-        { 
-            name: "Governance", 
-            icon: <Vote className="h-5 w-5" />, 
-            href: "/governance" },
+            name: "Make Cake", 
+            icon: <HandCoins className="h-5 w-5" />, 
+            href: "/cake-nft" },
+        // { 
+        //     name: "Stake", 
+        //     icon: <CoinsStacked className="h-5 w-5" />, 
+        //     href: "/stake" },
+        // { 
+        //     name: "Governance", 
+        //     icon: <Vote className="h-5 w-5" />, 
+        //     href: "/governance" 
+        // },
     ]
 
     return (

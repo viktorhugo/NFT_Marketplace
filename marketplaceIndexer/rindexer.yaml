@@ -1,0 +1,29 @@
+name: marketplaceIndexer
+description: Nft marketplace indexer
+project_type: no-code
+config: {}
+networks:
+- name: alfajores
+  chain_id: 44787
+  rpc: https://alfajores-forno.celo-testnet.org 
+storage:
+  postgres:
+    enabled: true
+  csv:
+    enabled: true
+    path: ./generated_csv
+native_transfers:
+  enabled: false
+contracts:
+- name: NftMarketplace
+  details:
+  - network: alfajores
+    address: 0x6041A3dE6E6C740B4Faf2676B2a357AC1617a3D3
+    start_block: '51768569'
+  abi: ./abis/NftMarketplace.abi.json
+  include_events:
+  - ItemListed
+  - ItemCanceled
+  - ItemBought
+graphql:
+  port: 4001

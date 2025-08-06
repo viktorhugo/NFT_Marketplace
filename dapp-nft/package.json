@@ -17,6 +17,7 @@
     "@wagmi/core": "^2.18.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "graphql-request": "^7.2.0",
     "lucide-react": "^0.536.0",
     "motion": "^12.23.12",
     "next": "15.4.5",

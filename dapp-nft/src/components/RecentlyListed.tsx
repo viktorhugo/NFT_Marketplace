@@ -1,146 +1,112 @@
 import { useQuery } from "@tanstack/react-query"
 import { useMemo } from "react"
-
+import NFTBox from "./NFTBox"
 import Link from "next/link"
-import NFTBox from "./NFTBox";
+import { BoughtCancelled, NFTItem, NFTItemShort, NFTQueryResponse } from "@/app/interfaces/indexer";
+import { LayoutList, LoaderPinwheel, ShieldAlert } from "lucide-react";
+import { request, gql } from 'graphql-request';
+import { Button } from "./ui/button";
 
-interface NFTItem {
-    rindexer_id: string;
-    contract_address: string;
-    seller: string;
-    nft_address: string;
-    token_id: string;
-    price: string;
-    tx_hash: string;
-    block_number: number;
-    block_hash: string;
-    network: string;
-    tx_index: number;
-    log_index: number;
-}
+const GRAPHQL_API_URL = 'http://localhost:4001/graphql';
 
-interface BoughtCancelled {
-    nft_address: string;
-    token_id: string;
-    tx_hash: string;
-    block_number: number;
-}
-
-interface NFTQueryResponse {
-    data: {
-        allItemListed: {
-            nodes: NFTItem[];
-        },
-        allItemBoughts: {
-            nodes: NFTItem[];
-        },
-        allItemCancelleds: {
-            nodes: NFTItem[];
-        },
-    }
-}
-
-const GET_RECENT_NFTS_QUERY = `
+const query = gql`
     query {
-        allItemListed {
+        allItemListeds {
             nodes {
-                rindexer_id
-                contract_address
                 seller
-                nft_address
-                token_id
                 price
-                tx_hash
-                block_number
-                block_hash
                 network
-                tx_index
-                log_index
+                contractAddress
+                rindexerId
+                nftAddress
+                tokenId
+                txHash
+                blockNumber
+                blockHash
+                txIndex
+                logIndex
             }
         }
-        allItemBought {
+        allItemBoughts {
             nodes {
-                rindexer_id
-                contract_address
-                seller
-                nft_address
-                token_id
-                price
-                tx_hash
-                block_number
-                block_hash
-                network
-                tx_index
-                log_index
+            buyer
+            price
+            network
+            contractAddress
+            rindexerId
+            nftAddress
+            tokenId
+            txHash
+            blockNumber
+            blockHash
+            txIndex
+            logIndex
             }
         }
-        allItemCancelled {
+        allItemCanceleds {
             nodes {
-                nft_address
-                token_id
-                tx_hash
-                block_number
+            contractAddress
+            seller
+            nftAddress
+            tokenId
+            txHash
+            blockNumber
+            blockHash
+            network
+            txIndex
+            logIndex
             }
         }
     }
 `;
 
 async function fetchNFTs(): Promise<NFTQueryResponse> {
-    const response = await fetch('/api/graphql', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            query: GET_RECENT_NFTS_QUERY
-        }),
-    });
-    if (!response.ok) {
+    try {
+        const response: NFTQueryResponse = await request(`${GRAPHQL_API_URL}`, query);
+        return response;
+    } catch (error) {
+        console.log(error);
         throw new Error('Network response was not ok');
     }
-    const result: NFTQueryResponse = await response.json();
-    return result;
 }
 
 function useRecentlyListedNFTs() {
-    const { data, error, isLoading } = useQuery({
+    const { data, error, isLoading } = useQuery<NFTQueryResponse>({
         queryKey: ['recentNFTs'],
         queryFn: fetchNFTs,
-        // refetchInterval: 10000, // Refetch every 10 seconds
     });
 
-    let nftDataList: NFTItem[] = [];
-
-    useMemo(() => {
+    const nftDataList: NFTItemShort[] = useMemo(() => {
         if (!data) return [];
 
         const boughtNFTs = new Set<string>();
         const cancelledNFTs = new Set<string>();
-    
-        data.data.allItemBoughts.nodes.forEach((item: NFTItem) => {
-            const key = `${item.nft_address}-${item.token_id}`;
+
+        data.allItemBoughts.nodes.forEach((item: NFTItem) => {
+            const key = `${item.nftAddress}-${item.tokenId}`;
             boughtNFTs.add(key);
         });
-    
-        data.data.allItemCancelleds.nodes.forEach((item: NFTItem) => {
-            const key = `${item.nft_address}-${item.token_id}`;
+
+        data.allItemCanceleds.nodes.forEach((item: BoughtCancelled) => {
+            const key = `${item.nftAddress}-${item.tokenId}`;
             cancelledNFTs.add(key);
         });
-    
-        nftDataList = data.data.allItemListed.nodes.filter((item: NFTItem) => {
-            if (!item.nft_address || !item.token_id) return false;
-            const key = `${item.nft_address}-${item.token_id}`;
+
+        const availsNFTs = data.allItemListeds.nodes.filter((item: NFTItem) => {
+            if (!item.nftAddress || !item.tokenId) return false;
+            const key = `${item.nftAddress}-${item.tokenId}`;
             return !boughtNFTs.has(key) && !cancelledNFTs.has(key);
         });
 
-        nftDataList = nftDataList.slice(0, 100); // Limit to 100 items
+        const recent = availsNFTs.slice(0, 100); // Limit to 100 items
 
-        nftDataList.map( (item: NFTItem) => {
-            tokenId: item.token_id;
-            contractAddress: item.contract_address;
-            price: item.price;
-            seller: item.seller;
-        });
+        return recent.map((item: NFTItem) => ({
+            tokenId: item.tokenId,
+            contractAddress: item.nftAddress,
+            price: item.price,
+            seller: item.seller,
+            buyer: item.buyer,
+        }));
 
     }, [data]);
 
@@ -154,48 +120,72 @@ function useRecentlyListedNFTs() {
 
 // Main component that uses the custom hook
 export default function RecentlyListedNFTs() {
-    const { nftDataList, isLoading, error } = useRecentlyListedNFTs();
+    
+    const { nftDataList, isLoading, error } = useRecentlyListedNFTs();    
 
-    if (isLoading) return <div>Loading...</div>;
+    if (isLoading) return (
+        <div className="flex flex-col items-center justify-center py-20">
+            <LoaderPinwheel className="animate-spin  h-12 w-12 " />
+            <span className="text-lg text-gray-300">Loading recent Nfts...</span>
+        </div>
+    );
+
     if (error) return (
-        <div className="container mx-auto px-4 py-8">
-            Error: {error.message}
+        <div className="flex flex-col items-center justify-center py-20 text-red-100">
+            <ShieldAlert className="h-12 w-12 mb-2 animate-pulse" />
+            <span className="text-lg font-semibold">¡Ups! Ocurrió un error al cargar los NFTs.</span>
+            <span className="text-sm text-red-400 mt-1">{error.message}</span>
         </div>
     );
 
     return (
         <div className="container mx-auto px-4 py-8">
-            <div className="mt-8 text-center">
-                <Link
-                    href="/list-nft"
-                    className="inline-block py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                >
-                    List Your NFT
-                </Link>
-            </div>
+            <Link
+                href="/list-nft"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors float-right"
+            >
+                <span>List NFT</span>
+                {/* Lucide: PlusCircle */}
+                <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="10" />
+                    <path d="M12 8v8M8 12h8" />
+                </svg>
+            </Link>
             <h2 className="text-2xl font-bold mb-6">Recently Listed NFTs</h2>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-6 gap-4">
                 { nftDataList.length > 0 ? (
-                    nftDataList.map((nft) => (
-                        
-                        <Link
-                            key={`${nft.token_id}-${nft.contract_address}`}
-                            href={`/buynft/${nft.contract_address}/${nft.token_id}`}
-                            className="hover:scale-105 transition-transform"
-                        >
-                            <NFTBox
-                                key={`${nft.token_id}-${nft.contract_address}`}
-                                tokenId={nft.token_id}
-                                contractAddress={nft.contract_address}
-                                price={nft.price}
-                            />
-                        </Link>
-                    ))
-                ) : (
-                    <p>No NFTs listed recently.</p>
-                )       
-
+                        nftDataList.map((nft) => (
+                            
+                            <Link
+                                key={`${nft.tokenId}-${nft.contractAddress}`}
+                                href={`/buynft/${nft.contractAddress}/${nft.tokenId}`}
+                                className="hover:scale-105 transition-transform"
+                            >
+                                <NFTBox
+                                    key={`${nft.tokenId}-${nft.contractAddress}`}
+                                    tokenId={nft.tokenId}
+                                    contractAddress={nft.contractAddress}
+                                    price={nft.price}
+                                />
+                            </Link>
+                        ))
+                    
+                    ) : (
+                        <div className="flex flex-col items-center justify-center col-span-full py-12">
+                            <svg className="h-16 w-16 text-gray-400 mb-4 animate-bounce" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+                                {/* Lucide: ImageOff */}
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M2 2l20 20M21 21H3a1 1 0 01-1-1V4.41M21 21V3a1 1 0 00-1-1H4.41M21 21l-5.34-5.34a2 2 0 00-2.83 0l-1.13 1.13a2 2 0 01-2.83 0L3 10.41" />
+                            </svg>
+                            <h3 className="text-xl font-semibold text-gray-300 mb-2">¡Nada por aquí todavía!</h3>
+                            <p className="text-gray-400 mb-4">Aún no hay NFTs listados recientemente.<br />¡Sé el primero en listar el tuyo!</p>
+                            
+                            <Button variant="default">
+                                <LayoutList className="animate-pulse" />
+                                <Link href="/list-nft">List NFTs</Link>
+                            </Button>
+                        </div>
+                    )       
                 }
             </div>
         </div>

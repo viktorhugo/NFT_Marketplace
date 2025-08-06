@@ -1,6 +1,6 @@
 interface ContractsConfig {
     [chainId: number]: {
-        capy: string
+        capyToken: string
         nftMarketplace: string
         cakeNft: string
         moodNft: string
@@ -9,7 +9,7 @@ interface ContractsConfig {
 
 export const chainsToContracts: ContractsConfig = {
     44787: { //.CELO -  ANVIL 31337 
-        capy: "0x223487ddC1A085Bc041B8aDC84d1055edA148925",
+        capyToken: "0x223487ddC1A085Bc041B8aDC84d1055edA148925",
         nftMarketplace: "0x6041A3dE6E6C740B4Faf2676B2a357AC1617a3D3",
         cakeNft: "0x90c3Ed396ebF34bD0058F40a71c1da0d09D9A42C",
         moodNft: "0xf8579eA50a2Dde9B89Ad4aF2624635984b674C63",
@@ -669,7 +669,7 @@ export const marketplaceAbi = [
     },
 ]
 
-export const contractAbi = [
+export const cakeNftAbi = [
     {
         type: "constructor",
         inputs: [],
