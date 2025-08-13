@@ -1,6 +1,6 @@
 'use client'
 
-import { DashboardLayout } from "@/components/dashboard-layout";
+import { DashboardLayout } from "@/components/DashboardLayout";
 import { useEffect, useState } from "react";
 import { useAccount, useChainId } from "wagmi";
 import { WalletConnect } from '../components/wallet-connect';
@@ -11,7 +11,7 @@ import RecentlyListedNFTs from "@/components/RecentlyListed";
 export default function Home() {
 
   const { address,isConnected } = useAccount()
-  const [isCompliant, setCompliant] = useState<boolean>(false);
+  const [isCompliant, setCompliant] = useState<boolean>(true);
   const checkCompliance = async (address: string): Promise<void> => {
     try {
         const response = await getRequestCompliance(address);
@@ -36,28 +36,7 @@ export default function Home() {
           <WalletConnect />
         ) : (
           isCompliant ? (
-            <>
             <RecentlyListedNFTs />
-            {/* 
-              <HeroStats />
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-                <div className="lg:col-span-2">
-                  <AssetCards />
-                </div>
-                <div>
-                  <PositionSummary />
-                </div>
-              </div>
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div className="lg:col-span-2">
-                  <MarketTrends />
-                </div>
-                <div>
-                  <RiskAssessment />
-                </div>
-              </div>
-              */}
-            </>
           ) : (
             <div className="flex flex-col items-center justify-center h-screen">
               <Ban className="text-red-500 w-16 h-16 mb-6 animate-bounce" />

@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Cherry+Bomb+One&family=Flamenco:wght@300;400&family=Mansalva&display=swap');
+
 @import "tailwindcss";
 @import "tw-animate-css";
 
@@ -113,8 +115,27 @@
 }
 
 body {
-  background: var(--background);
+  background: var(--primary-foreground);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: monospace;
+}
+
+.cherry-font {
+  font-family: "Cherry Bomb One", system-ui;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.mansalva-font {
+  font-family: "Mansalva", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+
+.flamenco-font {
+  font-family: "Flamenco", system-ui;
+  font-weight: 600;
+  font-style: normal;
 }
 

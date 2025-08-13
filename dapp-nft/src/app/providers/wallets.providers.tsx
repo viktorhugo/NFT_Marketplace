@@ -10,6 +10,10 @@ import "@rainbow-me/rainbowkit/styles.css";
 const queryClient = new QueryClient();
 
 export function WalletProviders(props: { children: React.ReactNode }) {
+    if (typeof window === 'undefined') {
+        // Estamos en SSR → no inicializar
+        return null;
+    }
     return (
         <WagmiProvider config={rainbowKitConfig}> {/* for interactions with the blockchain */}
             <QueryClientProvider client={queryClient}> {/* for caching and fetching data */}

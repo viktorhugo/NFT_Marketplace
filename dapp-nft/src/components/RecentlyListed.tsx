@@ -139,10 +139,10 @@ export default function RecentlyListedNFTs() {
     );
 
     return (
-        <div className="container mx-auto px-4 py-8">
+        <div className="container mx-auto px-4 mt-15 ">
             <Link
                 href="/list-nft"
-                className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors float-right"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-purple-500 text-white rounded-md hover:bg-purple-700 transition-colors float-right"
             >
                 <span>List NFT</span>
                 {/* Lucide: PlusCircle */}
@@ -151,16 +151,16 @@ export default function RecentlyListedNFTs() {
                     <path d="M12 8v8M8 12h8" />
                 </svg>
             </Link>
-            <h2 className="text-2xl font-bold mb-6">Recently Listed NFTs</h2>
+            <h2 className="text-3xl font-bold flamenco-font mb-6">Recently Listed NFTs</h2>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                 { nftDataList.length > 0 ? (
                         nftDataList.map((nft) => (
                             
                             <Link
                                 key={`${nft.tokenId}-${nft.contractAddress}`}
                                 href={`/buynft/${nft.contractAddress}/${nft.tokenId}`}
-                                className="hover:scale-105 transition-transform"
+                                className="hover:scale-105 transition-transform min-w-3xs"
                             >
                                 <NFTBox
                                     key={`${nft.tokenId}-${nft.contractAddress}`}

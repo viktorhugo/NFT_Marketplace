@@ -22,7 +22,7 @@ export default function formatPrice(priceStr: string) {
         const trimmedFraction = fractionStr.replace(/0+$/, "")
 
         // Format the result
-        return trimmedFraction ? `${wholeStr}.${trimmedFraction} CAPY` : `${wholeStr}.0000 CAPY`
+        return trimmedFraction ? `${wholeStr}.${trimmedFraction} CAPY` : `${wholeStr} CAPY`
     } catch {
         return priceStr
     }

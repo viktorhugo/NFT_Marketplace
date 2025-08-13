@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react"
 import Image from "next/image"
 import { useReadContract } from "wagmi"
-import { cakeNftAbi } from "@/app/constants"
+import { cakeNftAbi, nftAbi } from "@/app/constants"
 import formatPrice from "@/lib/utils"
-import { BanknoteX } from "lucide-react"
 import { Address } from "viem"
+import { Sparkles } from "lucide-react"
 
 // Type for the NFT data
 interface NFTBoxProps {
@@ -24,7 +24,7 @@ export default function NFTBox({ tokenId, contractAddress, price }: NFTBoxProps)
         isLoading: isTokenURILoading,
         error: tokenURIError,
     } = useReadContract({
-        abi: cakeNftAbi,
+        abi: nftAbi,
         address: contractAddress as Address,
         functionName: "tokenURI",
         args: [tokenId ? BigInt(tokenId) : undefined],
@@ -40,12 +40,19 @@ export default function NFTBox({ tokenId, contractAddress, price }: NFTBoxProps)
                 setIsLoadingImage(true);
                 try {
                     // Handle both HTTP and IPFS URIs
-                    const uri = tokenURIData as string
-                    const url = uri
+                    let url = tokenURIData as string
+                    if (url.startsWith("ipfs://")) {
+                        url = url.replace("ipfs://", "https://ipfs.io/ipfs/");
+                    }
+
                     const response = await fetch(url)
                     const metadata = await response.json()
-                    const imageUrl = metadata.image;
-                    
+                    let imageUrl = metadata.image;
+
+                    if (imageUrl && imageUrl.startsWith("ipfs://")) {
+                        imageUrl = imageUrl.replace("ipfs://", "https://ipfs.io/ipfs/");
+                    }
+
                     setNftImageUrl(imageUrl)
                 } catch (error) {
                     console.error("Error fetching metadata:", error)
@@ -60,83 +67,75 @@ export default function NFTBox({ tokenId, contractAddress, price }: NFTBoxProps)
     }, [tokenURIData, isTokenURILoading, tokenId, contractAddress])
 
     return (
+        <div className="group relative overflow-hidden rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 shadow-lg transition-all duration-500 
+            ease-in-out hover:shadow-cyan-400/20 hover:shadow-2xl hover:-translate-y-2">
+            {/* Animated gradient glow on hover */}
+            <div className="absolute -top-1/2 -left-1/2 w-[200%] h-[200%] bg-gradient-to-br from-transparent via-cyan-500/30 to-transparent 
+                opacity-0 group-hover:opacity-100 transition-opacity duration-500 animate-spin-slow" />
 
-        <div className="group relative overflow-hidden rounded-xl border bg-card shadow-nft transition-all duration-300 hover:shadow-nft-hover hover:-translate-y-1">
-            {/* Gradient overlay for premium look */}
-            <div className="absolute inset-0 bg-nft-card-gradient opacity-0 group-hover:opacity-5 transition-opacity duration-300" />
-            
             {/* Image container */}
-            <div className="aspect-square relative bg-muted overflow-hidden">
-                {isLoadingImage || isTokenURILoading ? (
-                    <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="flex flex-col items-center space-y-2">
-                        <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-                        <span className="text-sm text-muted-foreground animate-pulse">Loading...</span>
+            <div className="aspect-square relative overflow-hidden">
+                {
+                    isLoadingImage || isTokenURILoading ? (
+                        <div className="absolute inset-0 flex items-center justify-center bg-slate-900/50">
+                            <div className="flex flex-col items-center space-y-2">
+                                <div className="h-8 w-8 animate-spin rounded-full border-2 border-cyan-400 border-t-transparent" />
+                                <span className="text-sm text-slate-400">Loading...</span>
+                            </div>
                         </div>
-                    </div>
-                ) : imageError || tokenURIError || !nftImageUrl ? (
-                    <div className="relative">
-                        <Image
-                        src="/no-image-found.png"
-                        alt={`NFT ${tokenId}`}
-                        fill
-                        className="object-cover transition-transform duration-300 group-hover:scale-105"
-                        />
-                        {/* <BanknoteX className="absolute top-3 left-3 h-40 w-40 text-muted-foreground " /> */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent" />
-                    </div>
-                ) : (
-                    <div>
+                    ) : imageError || tokenURIError || !nftImageUrl ? (
+                        <div className="relative w-full h-full bg-slate-800 flex items-center justify-center">
+                            <Image
+                                src="/no-image-found.png"
+                                alt={`NFT ${tokenId}`}
+                                width={300}
+                                height={300}
+                                className="object-cover opacity-50"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+                        </div>
+                    ) : (
                         <Image
                             data-slot="nft-image"
                             src={nftImageUrl}
                             alt={`NFT ${tokenId}`}
                             fill
-                            className="object-cover"
+                            className="object-cover transition-transform duration-500 group-hover:scale-110 mask-b-from-50% "
                             onError={() => setImageError(true)}
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-background/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                    </div>
-                )}
-                
-                {/* Corner accent */}
-                <div className="absolute top-3 right-3 h-2 w-2 rounded-full bg-primary opacity-60 group-hover:opacity-100 transition-opacity duration-300" />
+                    )
+                }
+                {/* Bottom fade */}
+                <div className="absolute bottom-0 left-0 right-0 h-1/3 bg-gradient-to-t from-black/70 to-transparent" />
             </div>
-            
+
             {/* Content */}
-            <div className="p-5 space-y-3">
-                <div className="flex justify-between items-start">
+            <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
+                <div className="flex justify-between items-end">
                     <div className="flex-1 min-w-0">
-                        <h3 className="font-semibold text-lg text-card-foreground truncate group-hover:text-primary transition-colors duration-200">
+                        <p className="text-xs text-cyan-300 font-mono" title={contractAddress}>
+                            {contractAddress.substring(0, 6)}...
+                            {contractAddress.substring(contractAddress.length - 4)}
+                        </p>
+                        <h3 className="font-bold text-lg truncate">
                             Token #{tokenId}
                         </h3>
                     </div>
-                    <span className="inline-flex float-end px-3 py-1.5 rounded-md text-sm font-semibold bg-[#798EF0] shadow-sm">
-                        {formatPrice(price)}
-                    </span>
-                </div>
-                <p className="text-sm text-muted-foreground mt-1" title={contractAddress}>
-                    {contractAddress.substring(0, 5)}...{contractAddress.substring(contractAddress.length - 5)}
-                </p>
-                {/* Price badge */}
-                
-                {/* Bottom action area */}
-                <div className="flex items-center justify-between pt-2 border-t border-border/50">
-                    <div className="flex items-center space-x-2">
-                        <div className="h-2 w-2 rounded-full bg-nft-success" />
-                        <span className="text-xs text-muted-foreground">Available</span>
+                    <div className="flex flex-col items-end">
+                        <span className="text-xs text-slate-400">Price</span>
+                        <span className="font-bold text-lg text-cyan-400">{formatPrice(price)}</span>
                     </div>
-                    
-                    <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                        <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
-                            <svg className="h-4 w-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                            </svg>
-                        </div>
+                </div>
+                <div className="mt-4 pt-2 border-t border-white/10 flex justify-between items-center">
+                    <div className="flex items-center gap-1.5 text-xs text-slate-300">
+                        <Sparkles className="w-4 h-4 text-cyan-400" />
+                        <span>Collectible</span>
+                    </div>
+                    <div className="text-xs font-mono bg-white/10 px-2 py-1 rounded">
+                        Buy Now
                     </div>
                 </div>
             </div>
-            </div>
-
+        </div>
     )
 }
