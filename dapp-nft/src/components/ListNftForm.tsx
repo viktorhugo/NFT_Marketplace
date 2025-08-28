@@ -35,6 +35,8 @@ export default function ListNftForm() {
         functionName: "ownerOf",
         args: tokenId ? [BigInt(tokenId)] : undefined,
     })
+    console.log('ownerData', ownerData);
+    
 
     // For NFT approval
     const {

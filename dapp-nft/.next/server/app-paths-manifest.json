@@ -1,5 +1,4 @@
 {
-  "/_not-found/page": "app/_not-found/page.js",
   "/cake-nft/page": "app/cake-nft/page.js",
   "/favicon.ico/route": "app/favicon.ico/route.js",
   "/list-nft/page": "app/list-nft/page.js",

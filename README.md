@@ -2,6 +2,10 @@
 
 This is a full-stack NFT marketplace project that includes smart contracts, a decentralized application (dApp), and an event indexer for a complete and efficient user experience.
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/viktorhugo/time-lock-vault/refs/heads/master/dapp-nft/public/nft-marketplace.webp" alt="nft marketplace dApp Screenshot" width="700">
+</p>
+
 ## Table of Contents
 
 - [Project Overview](#project-overview)
